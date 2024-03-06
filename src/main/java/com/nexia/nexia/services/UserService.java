@@ -3,8 +3,8 @@ package com.nexia.nexia.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.example.basedomain.basedomain.dto.UserEvent;
-import com.nexia.nexia.kafka.UserProducer;
+// import com.example.basedomain.basedomain.dto.UserEvent;
+// import com.nexia.nexia.kafka.UserProducer;
 import com.nexia.nexia.models.User;
 import com.nexia.nexia.repositories.UserRepository;
 import com.nexia.nexia.services.iservices.IUserService;
@@ -18,8 +18,8 @@ public class UserService extends CrudOperations<User, String, UserRepository> im
     private jwtService jwtService;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private UserProducer userProducer;
+    // @Autowired
+    // private UserProducer userProducer;
 
     public UserService(UserRepository repository) {
         super(repository);
@@ -53,9 +53,9 @@ public class UserService extends CrudOperations<User, String, UserRepository> im
         String token = this.jwtService.generateToken(user.getId());
         // System.out.println(token);
         user.setToken(token);
-        if (!userProducer.broadcastUser(user, UserEvent.Status.ADD, "Adding user")) {
-            System.out.println("error user couldnt be added in other microservices");
-        }
+        // if (!userProducer.broadcastUser(user, UserEvent.Status.ADD, "Adding user")) {
+        //     System.out.println("error user couldnt be added in other microservices");
+        // }
         return addedUser;
     }
 
@@ -63,8 +63,8 @@ public class UserService extends CrudOperations<User, String, UserRepository> im
     public boolean deleteEntity(String token) {
         User user = getEntityById(token);
         super.deleteEntity(user.getId());
-        if (!userProducer.broadcastUser(user, UserEvent.Status.DELETE, "Deleting user"))
-            return false;
+        // if (!userProducer.broadcastUser(user, UserEvent.Status.DELETE, "Deleting user"))
+        //     return false;
         return true;
     }
 
@@ -78,7 +78,7 @@ public class UserService extends CrudOperations<User, String, UserRepository> im
             String passwordHashed = this.bCryptPasswordEncoder.encode(updatedUser.getPassword());
             updatedUser.setPassword(passwordHashed);
             super.updateEntity(updatedUser);
-            userProducer.broadcastUser(user, UserEvent.Status.UPDATE, "Update User");
+            // userProducer.broadcastUser(user, UserEvent.Status.UPDATE, "Update User");
             return updatedUser;
         } catch (Exception e) {
             return null;
